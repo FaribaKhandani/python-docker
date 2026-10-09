@@ -1,0 +1,5 @@
+.env
+password.txt
+.git
+__pycache__/
+*.pyc
