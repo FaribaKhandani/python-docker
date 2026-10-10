@@ -11,5 +11,20 @@ jobs:
       - name: Get source code
         uses: actions/checkout@v4
 
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
+            -u "${{ secrets.DOCKERHUB_USERNAME }}" \
+            --password-stdin
+
       - name: Build Docker image
-        run: docker build -t my-python-app:test .
+        run: |
+          docker build \
+            -t zfdeveloper/my-python-app:${{ github.sha }} \
+            -t zfdeveloper/my-python-app:latest \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push zfdeveloper/my-python-app:${{ github.sha }}
+          docker push zfdeveloper/my-python-app:latest
