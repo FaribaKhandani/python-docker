@@ -11,6 +11,9 @@ jobs:
       - name: Get source code
         uses: actions/checkout@v4
 
+      - name: Check Python syntax
+        run: python3 -m py_compile app.py
+
       - name: Login to Docker Hub
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
