@@ -1,5 +1,6 @@
 import os
 import psycopg
+print("CI failure test"
 
 print("Python container started")
 
