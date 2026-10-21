@@ -1,7 +1,7 @@
 import os
 import psycopg
-print("CI failure test"
 
+print("CI failure test")
 print("Python container started")
 
 with open("/run/secrets/db_password", "r") as file:
