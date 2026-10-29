@@ -1,27 +1,37 @@
 import os
 import psycopg
 
-print("CI failure test")
-print("Python container started")
 
-with open("/run/secrets/db_password", "r") as file:
-    db_password = file.read().strip()
+def get_db_config(db_password):
+    return {
+        "host": os.environ["DB_HOST"],
+        "port": int(os.environ["DB_PORT"]),
+        "dbname": os.environ["DB_NAME"],
+        "user": os.environ["DB_USER"],
+        "password": db_password,
+    }
 
-connection = psycopg.connect(
-    host=os.environ["DB_HOST"],
-    port=int(os.environ["DB_PORT"]),
-    dbname=os.environ["DB_NAME"],
-    user=os.environ["DB_USER"],
-    password=db_password
-)
 
-print("Connected to PostgreSQL!")
+def main():
+    print("Python container started")
 
-cursor = connection.cursor()
-cursor.execute("SELECT 1;")
+    with open("/run/secrets/db_password", "r") as file:
+        db_password = file.read().strip()
 
-result = cursor.fetchone()
+    connection = psycopg.connect(
+        **get_db_config(db_password)
+    )
 
-print("Database result:", result)
+    print("Connected to PostgreSQL!")
 
-connection.close()
+    cursor = connection.cursor()
+    cursor.execute("SELECT 1;")
+
+    result = cursor.fetchone()
+    print("Database result:", result)
+
+    connection.close()
+
+
+if __name__ == "__main__":
+    main()
