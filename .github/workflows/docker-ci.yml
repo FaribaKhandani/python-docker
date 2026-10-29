@@ -1,3 +1,16 @@
+name: Docker CI
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get source code
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -17,3 +30,15 @@
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
             -u "${{ secrets.DOCKERHUB_USERNAME }}" \
             --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t zfdeveloper/my-python-app:${{ github.sha }} \
+            -t zfdeveloper/my-python-app:latest \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push zfdeveloper/my-python-app:${{ github.sha }}
+          docker push zfdeveloper/my-python-app:latest
