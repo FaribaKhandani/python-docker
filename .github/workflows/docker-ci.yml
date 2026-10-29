@@ -1,33 +1,19 @@
-name: Docker CI
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
 
-on:
-  push:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Get source code
-        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       - name: Check Python syntax
-        run: python3 -m py_compile app.py
+        run: python -m py_compile app.py
+
+      - name: Run unit tests
+        run: python -m unittest -v
 
       - name: Login to Docker Hub
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
             -u "${{ secrets.DOCKERHUB_USERNAME }}" \
             --password-stdin
-
-      - name: Build Docker image
-        run: |
-          docker build \
-            -t zfdeveloper/my-python-app:${{ github.sha }} \
-            -t zfdeveloper/my-python-app:latest \
-            .
-
-      - name: Push Docker image
-        run: |
-          docker push zfdeveloper/my-python-app:${{ github.sha }}
-          docker push zfdeveloper/my-python-app:latest
