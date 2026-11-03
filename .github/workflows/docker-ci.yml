@@ -2,6 +2,7 @@ name: Docker CI
 
 on:
   push:
+  pull_request:
 
 jobs:
   build:
@@ -26,6 +27,8 @@ jobs:
         run: python -m unittest -v
 
       - name: Login to Docker Hub
+        if: github.event_name == 'push'
+
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
             -u "${{ secrets.DOCKERHUB_USERNAME }}" \
@@ -39,6 +42,9 @@ jobs:
             .
 
       - name: Push Docker image
+        if: github.event_name == 'push'
+
         run: |
           docker push zfdeveloper/my-python-app:${{ github.sha }}
           docker push zfdeveloper/my-python-app:latest
+
